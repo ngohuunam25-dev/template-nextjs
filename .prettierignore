@@ -1,0 +1,8 @@
+node_modules
+.next
+dist
+build
+coverage
+public
+
+# Ignore all files in the src directory except for .ts and .tsx files
