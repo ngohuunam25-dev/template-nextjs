@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-let locales = ["en-US", "nl-NL", "nl"];
+let locales = ["en", "nl"];
 
 // Get the preferred locale, similar to the above or using a library
 function getLocale(request: NextRequest) {
-  const defaultLocale = "en-US";
+  const defaultLocale = "en";
   // to check store in browser
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
   if (cookieLocale && locales.includes(cookieLocale)) {
@@ -16,7 +16,7 @@ function getLocale(request: NextRequest) {
   if (!acceptLanguage) return defaultLocale;
 
   const preferred = acceptLanguage
-    .split(",") // ["nl-NL", "nl;q=0.9", "en-US;q=0.8"]
+    .split(",") // ["nl-NL", "nl;q=0.9", "en;q=0.8"]
     .map((lang) => {
       const [locale, q] = lang.trim().split(";q=");
       return {
@@ -48,7 +48,7 @@ export function proxy(request: NextRequest) {
   const locale = getLocale(request);
   request.nextUrl.pathname = `/${locale}${pathname}`;
   // e.g. incoming request is /products
-  // The new URL is now /en-US/products
+  // The new URL is now /en/products
   return NextResponse.redirect(request.nextUrl);
 }
 
