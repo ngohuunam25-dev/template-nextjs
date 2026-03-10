@@ -2,7 +2,7 @@ import { CredentialsAuhorizeType } from "@/types/auth";
 import moment from "moment";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
+import type { SessionOptions } from "next-auth";
 export const authOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -18,6 +18,7 @@ export const authOptions = {
       },
       async authorize(credentials: CredentialsAuhorizeType | undefined, req) {
         try {
+          debugger;
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/authentication/send-sign-in-code`,
             {
@@ -55,8 +56,32 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/signin",
+    error: '/auth/error',
   },
-  session: {},
+  jwt: {
+  },
+  session: {
+      strategy: "jwt",
+      //  maxAge: 30 * 24 * 60 * 60, // 30days
+       maxAge:  3 * 60, //3 mins
+
+  } as Partial<SessionOptions>,
+  callbacks: {
+    async signIn({user, account, profile, email, credentials }) {
+      console.log('line70',user, account, profile, email, credentials );
+      
+    return true
+  },
+  async jwt({token}) {
+    return token
+  },
+  async session({ session, token }) {
+      session.accessToken = token.accessToken
+    session.user.id = token.id
+    
+    return session
+    }
+  }
 };
 
 const handler = NextAuth(authOptions);

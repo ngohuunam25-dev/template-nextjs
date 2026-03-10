@@ -11,6 +11,7 @@ import {
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useForm } from "@tanstack/react-form";
+import { signIn } from "next-auth/react"
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -34,7 +35,9 @@ export default function SigninForm() {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log("line37value", value);
+     const res = await signIn('credentials', { redirect: false, password: value.password, email: value.email })
+      console.log('ress',res);
+      
     },
   });
   return (
@@ -106,7 +109,7 @@ export default function SigninForm() {
       </CardContent>
       <CardFooter>
         <Field orientation="horizontal">
-          <Button type="submit" form="siginin-form">
+          <Button type="submit" form="siginin-form" className="w-full">
             Sign In
           </Button>
         </Field>
